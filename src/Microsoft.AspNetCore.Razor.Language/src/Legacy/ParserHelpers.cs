@@ -5,9 +5,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 
@@ -15,17 +15,7 @@ internal static class ParserHelpers
 {
     public static bool IsNewLine(char value)
     {
-        switch (value)
-        {
-            case '\r': // Carriage return
-            case '\n': // Linefeed
-            case '\u0085': // Next Line
-            case '\u2028': // Line separator
-            case '\u2029': // Paragraph separator
-                return true;
-        }
-
-        return false;
+        return SyntaxFacts.IsNewLine(value);
     }
 
     public static bool IsNewLine(string value)
@@ -43,33 +33,26 @@ internal static class ParserHelpers
 
     public static bool IsIdentifier(string value, bool requireIdentifierStart)
     {
-        IEnumerable<char> identifierPart = value;
         if (requireIdentifierStart)
         {
-            identifierPart = identifierPart.Skip(1);
+            value = value.Substring(1);
         }
-        return (!requireIdentifierStart || IsIdentifierStart(value[0])) && identifierPart.All(IsIdentifierPart);
+        return (!requireIdentifierStart || IsIdentifierStart(value[0])) && value.All(IsIdentifierPart);
     }
 
     public static bool IsIdentifierStart(char value)
     {
-        return value == '_' || IsLetter(value);
+        return SyntaxFacts.IsIdentifierStartCharacter(value);
     }
 
     public static bool IsIdentifierPart(char value)
     {
-        return IsLetter(value) ||
-            IsDecimalDigit(value) ||
-            (CharUnicodeInfo.GetUnicodeCategory(value) is UnicodeCategory.Format or UnicodeCategory.SpacingCombiningMark or UnicodeCategory.NonSpacingMark or UnicodeCategory.ConnectorPunctuation);
+        return SyntaxFacts.IsIdentifierPartCharacter(value);
     }
 
     public static bool IsWhitespace(char value)
     {
-        return value == ' ' ||
-               value == '\f' ||
-               value == '\t' ||
-               value == '\u000B' || // Vertical Tab
-               char.IsSeparator(value); ;
+        return SyntaxFacts.IsWhitespace(value);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
