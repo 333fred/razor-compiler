@@ -651,7 +651,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
             forwardSlashToken = EatCurrentToken();
         }
 
-        var closeAngleToken = SyntaxFactory.MissingToken(SyntaxKind.CloseAngle);
+        SyntaxToken closeAngleToken;
         if (mode == ParseMode.MarkupInCodeBlock)
         {
             if (EndOfFile || !At(SyntaxKind.CloseAngle))
@@ -663,6 +663,7 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                             tagName.Length == 0 ? tagStartLocation : SourceLocationTracker.Advance(tagStartLocation, "<"),
                             Math.Max(tagName.Length, 1)),
                         tagName));
+                closeAngleToken = SyntaxFactory.MissingToken(SyntaxKind.CloseAngle);
             }
             else
             {
@@ -670,6 +671,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 {
                     isWellFormed = true;
                     closeAngleToken = EatCurrentToken();
+                }
+                else
+                {
+                    closeAngleToken = SyntaxFactory.MissingToken(SyntaxKind.CloseAngle);
                 }
 
                 // Completed tags in code blocks have no accepted characters.
@@ -715,6 +720,10 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
         {
             isWellFormed = true;
             closeAngleToken = EatCurrentToken();
+        }
+        else
+        {
+            closeAngleToken = SyntaxFactory.MissingToken(SyntaxKind.CloseAngle);
         }
 
         // End tag block
@@ -1906,30 +1915,30 @@ internal class HtmlMarkupParser : TokenizerBackedParser<HtmlTokenizer>
                 {
                     if (NextIs(SyntaxKind.CloseAngle))
                     {
-                            // Check condition 2.3: We're at the end of a comment. Check to make sure the text ending is allowed.
-                            isValidComment = !IsCommentContentEndingInvalid(prevTokens);
+                        // Check condition 2.3: We're at the end of a comment. Check to make sure the text ending is allowed.
+                        isValidComment = !IsCommentContentEndingInvalid(prevTokens);
                         return true;
                     }
                     else if (NextIs(ns => IsHyphen(ns) && NextIs(SyntaxKind.CloseAngle)))
                     {
-                            // Check condition 2.3: we're at the end of a comment, which has an extra dash.
-                            // Need to treat the dash as part of the content and check the ending.
-                            // However, that case would have already been checked as part of check from 2.2.1 which
-                            // would already fail this iteration and we wouldn't get here
-                            isValidComment = true;
+                        // Check condition 2.3: we're at the end of a comment, which has an extra dash.
+                        // Need to treat the dash as part of the content and check the ending.
+                        // However, that case would have already been checked as part of check from 2.2.1 which
+                        // would already fail this iteration and we wouldn't get here
+                        isValidComment = true;
                         return true;
                     }
                     else if (NextIs(ns => ns.Kind == SyntaxKind.Bang && NextIs(SyntaxKind.CloseAngle)))
                     {
-                            // This is condition 2.2.3
-                            isValidComment = false;
+                        // This is condition 2.2.3
+                        isValidComment = false;
                         return true;
                     }
                 }
                 else if (token.Kind == SyntaxKind.OpenAngle)
                 {
-                        // Checking condition 2.2.1
-                        if (NextIs(ns => ns.Kind == SyntaxKind.Bang && NextIs(SyntaxKind.DoubleHyphen)))
+                    // Checking condition 2.2.1
+                    if (NextIs(ns => ns.Kind == SyntaxKind.Bang && NextIs(SyntaxKind.DoubleHyphen)))
                     {
                         isValidComment = false;
                         return true;

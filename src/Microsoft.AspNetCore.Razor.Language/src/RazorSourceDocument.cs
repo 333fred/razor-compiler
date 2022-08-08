@@ -63,6 +63,8 @@ public abstract class RazorSourceDocument
     /// </summary>
     public abstract RazorSourceLineCollection Lines { get; }
 
+    internal abstract string GetAllText();
+
     /// <summary>
     /// Copies a range of characters from the <see cref="RazorSourceDocument"/> to the specified <paramref name="destination"/>.
     /// </summary>

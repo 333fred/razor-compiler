@@ -8,4 +8,5 @@ namespace Microsoft.AspNetCore.Razor.Language.Legacy;
 internal interface ITextDocument : ITextBuffer
 {
     SourceLocation Location { get; }
+    string ReadAllText();
 }

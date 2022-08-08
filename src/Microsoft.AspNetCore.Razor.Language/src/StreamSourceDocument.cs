@@ -117,4 +117,9 @@ internal sealed class StreamSourceDocument : RazorSourceDocument
 
         return new StringSourceDocument(content, contentEncoding, properties);
     }
+
+    internal override string GetAllText()
+    {
+        return _innerSourceDocument.GetAllText();
+    }
 }

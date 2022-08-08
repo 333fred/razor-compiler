@@ -157,4 +157,9 @@ internal class LargeTextSourceDocument : RazorSourceDocument
         }
         while (read == chunkMaxLength);
     }
+
+    internal override string GetAllText()
+    {
+        throw new NotImplementedException();
+    }
 }

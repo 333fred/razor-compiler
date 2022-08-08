@@ -103,4 +103,9 @@ internal class StringSourceDocument : RazorSourceDocument
 
         return copiedChecksum;
     }
+
+    internal override string GetAllText()
+    {
+        return _content;
+    }
 }

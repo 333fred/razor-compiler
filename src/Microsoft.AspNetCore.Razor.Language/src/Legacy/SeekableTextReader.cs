@@ -126,4 +126,9 @@ internal sealed class SeekableTextReader : TextReader, ITextDocument
 
         _current = -1;
     }
+
+    public string ReadAllText()
+    {
+        return _sourceDocument.GetAllText();
+    }
 }

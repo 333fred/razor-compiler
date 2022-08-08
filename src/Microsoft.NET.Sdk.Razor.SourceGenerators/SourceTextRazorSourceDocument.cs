@@ -40,5 +40,10 @@ namespace Microsoft.NET.Sdk.Razor.SourceGenerators
         public override byte[] GetChecksum() => _sourceText.GetChecksum().ToArray();
 
         public override string GetChecksumAlgorithm() => _sourceText.ChecksumAlgorithm.ToString().ToUpperInvariant();
+
+        internal override string GetAllText()
+        {
+            return _sourceText.ToString();
+        }
     }
 }

@@ -99,6 +99,8 @@ internal class CSharpTokenizer : Tokenizer
             { "where", CSharpKeyword.Where }
         };
 
+    private readonly string _content;
+
     public CSharpTokenizer(ITextDocument source)
         : base(source)
     {
@@ -130,6 +132,8 @@ internal class CSharpTokenizer : Tokenizer
                 { '~', () => SyntaxKind.Tilde },
                 { '#', () => SyntaxKind.Hash }
             };
+
+        _content = source.ReadAllText();
     }
 
     protected override int StartState => (int)CSharpTokenizerState.Data;
